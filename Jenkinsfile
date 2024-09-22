@@ -12,9 +12,9 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
+                    sh 'python3 SeleniumGridHealthCheck.py ${node_count}'
 
-                    sh 'python SeleniumGridHealthCheck.py ${node_count}'
-                }
+ }
             }
         }
         stage('Send Results') {
