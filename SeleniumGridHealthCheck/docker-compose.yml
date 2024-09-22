@@ -1,12 +1,23 @@
+version: '3'
+
 services:
   selenium-hub:
-    image: selenium/hub
+    image: selenium/hub:4.25.0
     ports:
       - "4444:4444"
+    networks:
+      - selenium-network
+
   selenium-node-chrome:
-    image: selenium/node-chrome
-    environment:
-      - SE_EVENT_BUS_HOST=selenium-hub
+    image: selenium/node-chrome:4.25.0
     depends_on:
       - selenium-hub
+    environment:
+      - HUB_HOST=selenium-hub
+      - NODE_TIMEOUT=60
+    networks:
+      - selenium-network
+
+networks:
+  selenium-network:
 
