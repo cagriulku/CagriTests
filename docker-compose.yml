@@ -13,10 +13,11 @@ services:
     depends_on:
       - selenium-hub
     environment:
-      - HUB_PORT_4444_TCP_ADDR=selenium-hub
-      - HUB_PORT_4444_TCP_PORT=4444
+      - HUB_HOST=selenium-hub
+      - SE_EVENT_BUS_HOST=selenium-hub
     networks:
       - selenium-network
 
 networks:
   selenium-network:
+
