@@ -19,7 +19,7 @@ pipeline {
         }
         stage('Send Results') {
             steps {
-                sh 'curl -X POST -H "Content-Type: application/json" -d "{\"result\": \"Test passed\"}" https://webhook.site/b64f054d-f1f6-443a-9ce6-15aa7653e593'
+                sh 'curl -X POST -H "Content-Type: application/json" -d "{\\"result\\": \\"Test passed\\"}" https://webhook.site/b64f054d-f1f6-443a-9ce6-15aa7653e593'
             }
         }
     }
