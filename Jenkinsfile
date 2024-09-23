@@ -13,14 +13,37 @@ pipeline {
             steps {
                 script {
                     sh 'python3 SeleniumGridHealthCheck.py ${node_count}'
-
- }
+                }
+            }
+        }
+        stage('Check Health') {
+            steps {
+                script {
+                    def healthStatus = sh(script: 'python3 check_grid_health.py', returnStdout: true).trim()
+                }
             }
         }
         stage('Send Results') {
             steps {
-                sh 'curl -X POST -H "Content-Type: application/json" -d "{\\"result\\": \\"Test passed\\"}" https://webhook.site/b64f054d-f1f6-443a-9ce6-15aa7653e593'
+                script {
+                    def testResult = sh(script: 'python3 check_test_result.py', returnStdout: true).trim()
+                    
+                    def buildNumber = currentBuild.number
+                    def nodes = params.node_count
+                    currentBuild.displayName = "Build_Name_${buildNumber}_Nodes_${nodes}"
+                    
+
+                    def jsonOutput = """{
+                        "build_name": "Cagri_Build_Name_${buildNumber}",
+                        "node_count": ${nodes},
+                        "result": "${testResult}",
+                        "grid_health": "${healthStatus}"
+                    }"""
+                    
+                    sh "curl -X POST -H 'Content-Type: application/json' -d '${jsonOutput}' https://webhook.site/b64f054d-f1f6-443a-9ce6-15aa7653e593"
+                }
             }
         }
     }
 }
+
