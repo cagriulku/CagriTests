@@ -25,7 +25,10 @@ pipeline {
         }
         stage('Send Results') {
             steps {
-                sh 'curl -X POST -H "Content-Type: application/json" -d "{\\"result\\": \\"Test passed\\"}" https://webhook.site/b64f054d-f1f6-443a-9ce6-15aa7653e593'
+                script {
+                def buildName = "Build_Name_${env.BUILD_NUMBER}"
+                def nodeCount = params.node_count
+                sh "curl -X POST -H 'Content-Type: application/json' -d '{\\"Cagri_build_name\\": \\"${buildName}\\", \\"node_count\\": \\"${nodeCount}\\", \\"result\\": \\"Test passed\\"}' https://webhook.site/b64f054d-f1f6-443a-9ce6-15aa7653e593"
             }
         }
     }
