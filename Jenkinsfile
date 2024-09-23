@@ -32,7 +32,7 @@ pipeline {
                     def jsonOutput = """{
                         "build_name": "Cagri_Build_Name_${buildNumber}",
                         "node_count": ${nodes},
-                        "result": "${testPassed ? 'passed' : 'failed'}"
+                        "result": "${testResults.contains("OK") ? 'passed' : 'failed'}"
                     }"""
 
                     sh "curl -X POST -H 'Content-Type: application/json' -d '${jsonOutput}' https://webhook.site/b64f054d-f1f6-443a-9ce6-15aa7653e593"
@@ -41,4 +41,3 @@ pipeline {
         }
     }
 }
-
