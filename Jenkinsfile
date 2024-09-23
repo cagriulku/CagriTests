@@ -12,28 +12,29 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    sh 'python3 SeleniumGridHealthCheck.py ${node_count}'
+                    def testResults = sh(script: 'python3 -m unittest discover -s tests -p "*.py"', returnStdout: true).trim()
+                    echo "${testResults}"
+                    
+                    def testPassed = testResults.contains("OK")
+                    if (!testPassed) {
+                        error "Tests failed!"
+                    }
                 }
             }
         }
         stage('Send Results') {
             steps {
                 script {
-                    def testResult = sh(script: 'python3 check_test_result.py', returnStdout: true).trim()
-                    
-                    def gridHealth = sh(script: 'python3 SeleniumGridHealthCheck.py ${node_count}', returnStdout: true).trim()
-                    
                     def buildNumber = currentBuild.number
                     def nodes = params.node_count
                     currentBuild.displayName = "Build_Name_${buildNumber}_Nodes_${nodes}"
-                    
+
                     def jsonOutput = """{
                         "build_name": "Cagri_Build_Name_${buildNumber}",
                         "node_count": ${nodes},
-                        "Tests result": "${testResult}",
-                        "grid_health": "${gridHealth}"
+                        "result": "${testPassed ? 'passed' : 'failed'}"
                     }"""
-                    
+
                     sh "curl -X POST -H 'Content-Type: application/json' -d '${jsonOutput}' https://webhook.site/b64f054d-f1f6-443a-9ce6-15aa7653e593"
                 }
             }
