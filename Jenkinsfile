@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
     parameters {
@@ -9,18 +10,19 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Check Selenium Grid Health') {
-            steps {
-                script {
-                    def gridHealth = sh(script: 'python3 SeleniumGridHealthCheck.py', returnStdout: true).trim()
-                    echo "${gridHealth}"
-                    
-                    if (!gridHealth.contains("OK")) {
-                        error "Grid healty failed!"
-                    }
-                }
-            }
-        }
+        
+       stage('Check Selenium Grid Health') {
+          steps {
+             script {
+                 def gridHealth = sh(script: 'python3 SeleniumGridHealthCheck.py', returnStdout: true).trim()
+                 echo "${gridHealth}"
+
+                   if (!gridHealth.contains("Selenium Grid is ready!")) {
+                        error "Grid health check failed!"
+                       }
+                     }
+                  }
+               }
         stage('Run Tests') {
             steps {
                 script {
